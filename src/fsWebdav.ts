@@ -16,6 +16,7 @@ import type { Entity, WebdavConfig } from "./baseTypes";
 import { VALID_REQURL } from "./baseTypesObs";
 import { FakeFs } from "./fsAll";
 import { bufferToArrayBuffer, delay, splitFileSizeToChunkRanges } from "./misc";
+import { mergeSynologyConfig, resolveWebdavAddress } from "./webdavSynology";
 
 /**
  * https://stackoverflow.com/questions/32850898/how-to-check-if-a-string-has-any-non-iso-8859-1-characters-with-javascript
@@ -150,7 +151,41 @@ export const DEFAULT_WEBDAV_CONFIG = {
   manualRecursive: true,
   depth: "manual_1",
   remoteBaseDir: "",
+  customHeaders: "",
+  preset: "generic",
+  synology: {
+    protocol: "https",
+    host: "",
+    port: "5006",
+    sharedFolder: "",
+  },
 } as WebdavConfig;
+
+export function applySynologyWebdavRuntimeDefaults(config: WebdavConfig) {
+  if (config.preset === "synology") {
+    const syn = mergeSynologyConfig(config.synology);
+    config.synology = syn;
+    const built = resolveWebdavAddress(config);
+    if (built !== "") {
+      config.address = built;
+    }
+    if (config.authType !== "digest") {
+      config.authType = "basic";
+    }
+    if (
+      config.depth === undefined ||
+      config.depth === "auto" ||
+      config.depth === "auto_1" ||
+      config.depth === "auto_infinity" ||
+      config.depth === "auto_unknown"
+    ) {
+      // Synology WebDAV Server supports DavDepthInfinity.
+      config.depth = "manual_infinity";
+      config.manualRecursive = false;
+    }
+    return;
+  }
+}
 
 const getWebdavPath = (fileOrFolderPath: string, remoteBaseDir: string) => {
   let key = fileOrFolderPath;
@@ -273,6 +308,7 @@ export class FakeFsWebdav extends FakeFs {
     super();
     this.kind = "webdav";
     this.webdavConfig = cloneDeep(webdavConfig);
+    applySynologyWebdavRuntimeDefaults(this.webdavConfig);
     this.webdavConfig.address = tryEncodeURI(this.webdavConfig.address);
     this.remoteBaseDir = this.webdavConfig.remoteBaseDir || vaultName || "";
     this.vaultFolderExists = false;

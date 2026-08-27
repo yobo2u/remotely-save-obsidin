@@ -37,17 +37,19 @@
 
    ![](./synology_webdav_server_settings.png)
 
-6. 在 Remotely Save 设置页，你的地址应如下格式输入：
+6. 在 Remotely Save 设置页，远程服务选择 **WebDAV**，再把 **服务器预设** 设为 **群晖 NAS（WebDAV Server）**，然后填写：
 
-   `http(s)://<your synology ip or domain>:<port>/<shared folder>/<sub folders>`
+   - 协议：`https`（端口 **5006**）或 `http`（端口 **5005**）
+   - NAS 主机：局域网 IP 或域名（QuickConnect 通常 **不能** 用于 WebDAV）
+   - 共享文件夹路径：`share2/哈哈哈/sub folder`
 
-   比如说，本教程里，正确的地址类似于：
+   用户名和密码是对 `share2` 有读写权限的 DSM 账号。
 
-   `http://<ip>:5000/share2/哈哈哈/sub folder`
+   选择群晖预设后，Depth 会自动设为 “supports depth=infinity”。请在 WebDAV Server 套件中勾选 **DavDepthInfinity**。
 
-   用户名和密码是你之前配置了允许读写 `share2` 的那个账号。
+   如果更想用通用 WebDAV 模式，也可以直接把完整地址填进「服务器地址」：
 
-   Depth 设置应为“supports depth="infinity"”。
+   `https://<your synology ip or domain>:5006/<shared folder>/<sub folders>`
 
    检查连接！
 

@@ -24,8 +24,10 @@
   - 个人版本 OneDrive（应用文件夹）
   - 个人版本 OneDrive（根目录）（PRO 功能）
   - Webdav（NextCloud / InfiniCloud / Synology webdav 服务器 / ...）
+  - **群晖 NAS**：WebDAV 预设（DSM WebDAV Server，HTTPS 5006 / HTTP 5005）
   - Webdis
-  - Google Drive（GDrive）（PRO 功能）
+  - Google 云端硬盘（**自建 OAuth 客户端**，本分支；见[文档](./docs/remote_services/googledrive_byo/README.zh-cn.md)）
+  - Google Drive（GDrive）（原版 PRO 功能）
   - Box（PRO 功能）
   - pCloud（PRO 功能）
   - Yandex Disk（PRO 功能）
@@ -123,7 +125,8 @@
   - [Nginx (`ngx_http_dav_module`, `nginx-dav-ext-module`, with Docker)](./docs/remote_services/webdav_nginx/README.md)
   - [Apache (with Docker)](./docs/remote_services/webdav_apache/README.md)
   - [Caddy with `http.handlers.webdav` module](./docs/remote_services/webdav_caddy/README.md)
-- 非常旧版本的Obsidian需要[配置 CORS](./docs/remote_services/webdav_general/webav_cors.md)。
+- 非常旧版本的Obsidian需要[配置 CORS](./docs/remote_services/webdav_general/webav_cors.md)。当前 Obsidian（1.5+ / 1.13）会通过 `requestUrl` 绕过 CORS。
+- 群晖 NAS 请选择 WebDAV 的 **群晖 NAS** 预设。官方 WebDAV Server 端口是 **HTTPS 5006** 和 **HTTP 5005**，并启用 DavDepthInfinity。见[群晖教程](./docs/remote_services/webdav_synology_webdav_server/README.zh-cn.md)。
 - 你的数据会同步到你的webdav服务器上的 `${vaultName}` 子文件夹。
 - 基于密码的端到端加密也是可以的。但请注意，**vault 名称本身未加密**。
 - 如果你想在多个设备之间同步文件，**在使用默认设置时，你的 vault 名称应该相同**。
@@ -138,6 +141,10 @@
 ### Onedrive（完整访问）（PRO 功能）
 
 PRO（付费）功能“与 Onedrive（完整）同步”允许用户与 Onedrive 根文件夹进行同步。教程和限制在[这里](./docs/remote_services/onedrivefull/README.md)。
+
+### Google 云端硬盘（自建 OAuth 客户端）
+
+本分支可以在**不订阅** Remotely Save PRO 的情况下同步 Google 云端硬盘。你需要自己在 Google Cloud 创建 OAuth 客户端，并把 Client ID / Secret 填进插件。步骤和限制见 [Google 云端硬盘（自建 OAuth）](./docs/remote_services/googledrive_byo/README.zh-cn.md)。
 
 ### Google Drive（GDrive）（PRO 功能）
 

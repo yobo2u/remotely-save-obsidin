@@ -82,6 +82,7 @@ import {
   setConfigBySuccessfullAuthInplace as setConfigBySuccessfullAuthInplaceDropbox,
 } from "./fsDropbox";
 import { FakeFsEncrypt } from "./fsEncrypt";
+import { DEFAULT_GDRIVE_CONFIG } from "./fsGDrive";
 import { getClient } from "./fsGetter";
 import { FakeFsLocal } from "./fsLocal";
 import {
@@ -119,6 +120,7 @@ const DEFAULT_SETTINGS: RemotelySavePluginSettings = {
   onedrive: DEFAULT_ONEDRIVE_CONFIG,
   onedrivefull: DEFAULT_ONEDRIVEFULL_CONFIG,
   webdis: DEFAULT_WEBDIS_CONFIG,
+  gdrive: DEFAULT_GDRIVE_CONFIG,
   googledrive: DEFAULT_GOOGLEDRIVE_CONFIG,
   box: DEFAULT_BOX_CONFIG,
   pcloud: DEFAULT_PCLOUD_CONFIG,
@@ -1393,6 +1395,20 @@ export default class RemotelySavePlugin extends Plugin {
     if (this.settings.webdav.customHeaders === undefined) {
       this.settings.webdav.customHeaders = "";
     }
+    if (this.settings.webdav.preset === undefined) {
+      this.settings.webdav.preset = "generic";
+    }
+    if (this.settings.webdav.synology === undefined) {
+      this.settings.webdav.synology = {
+        protocol: "https",
+        host: "",
+        port: "5006",
+        sharedFolder: "",
+      };
+    }
+    if (this.settings.webdav.synology.port === undefined) {
+      this.settings.webdav.synology.port = "5006";
+    }
     if (this.settings.s3.partsConcurrency === undefined) {
       this.settings.s3.partsConcurrency = 20;
     }
@@ -1481,6 +1497,22 @@ export default class RemotelySavePlugin extends Plugin {
     }
     if (this.settings.profiler.recordSize === undefined) {
       this.settings.profiler.recordSize = false;
+    }
+
+    if (this.settings.gdrive === undefined) {
+      this.settings.gdrive = DEFAULT_GDRIVE_CONFIG;
+    }
+    if (this.settings.gdrive.clientID === undefined) {
+      this.settings.gdrive.clientID = "";
+    }
+    if (this.settings.gdrive.clientSecret === undefined) {
+      this.settings.gdrive.clientSecret = "";
+    }
+    if (
+      this.settings.gdrive.redirectUri === undefined ||
+      this.settings.gdrive.redirectUri === ""
+    ) {
+      this.settings.gdrive.redirectUri = "http://127.0.0.1";
     }
 
     if (this.settings.googledrive === undefined) {
@@ -1588,6 +1620,25 @@ export default class RemotelySavePlugin extends Plugin {
       needSave = true;
     }
 
+    let gdriveExpired = false;
+    if (
+      this.settings.gdrive.refreshToken !== "" &&
+      this.settings.gdrive.credentialsShouldBeDeletedAtTimeMs !== undefined &&
+      this.settings.gdrive.credentialsShouldBeDeletedAtTimeMs !== 0 &&
+      current >= this.settings.gdrive.credentialsShouldBeDeletedAtTimeMs
+    ) {
+      console.warn(`gdrive expired`);
+      gdriveExpired = true;
+      const keptClientID = this.settings.gdrive.clientID;
+      const keptSecret = this.settings.gdrive.clientSecret;
+      const keptRedirect = this.settings.gdrive.redirectUri;
+      this.settings.gdrive = cloneDeep(DEFAULT_GDRIVE_CONFIG);
+      this.settings.gdrive.clientID = keptClientID;
+      this.settings.gdrive.clientSecret = keptSecret;
+      this.settings.gdrive.redirectUri = keptRedirect;
+      needSave = true;
+    }
+
     let googleDriveExpired = false;
     if (
       this.settings.googledrive.refreshToken !== "" &&
@@ -1674,6 +1725,12 @@ export default class RemotelySavePlugin extends Plugin {
     if (googleDriveExpired) {
       new Notice(
         `${this.manifest.name}: You haven't manually auth Google Drive for many days, you need to re-auth it again.`,
+        6000
+      );
+    }
+    if (gdriveExpired) {
+      new Notice(
+        `${this.manifest.name}: You haven't manually auth Google Drive (Bring Your Own OAuth client) for many days, you need to re-auth it again.`,
         6000
       );
     }

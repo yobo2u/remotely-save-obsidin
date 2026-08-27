@@ -24,8 +24,10 @@ This is yet another unofficial sync plugin for Obsidian. If you like it or find 
   - OneDrive for personal (App Folder)
   - OneDrive for personal (Full) (PRO feature)
   - Webdav (NextCloud / InfiniCloud / Synology webdav server / ...)
+  - **Synology NAS** via the WebDAV preset (DSM WebDAV Server, HTTPS 5006 / HTTP 5005)
   - Webdis
-  - Google Drive (GDrive) (PRO feature)
+  - Google Drive with **your own OAuth client** (this fork; see [docs](./docs/remote_services/googledrive_byo/README.md))
+  - Google Drive (GDrive) (original PRO feature)
   - Box (PRO feature)
   - pCloud (PRO feature)
   - Yandex Disk (PRO feature)
@@ -123,7 +125,8 @@ Additionally, the plugin author may occasionally visit Obsidian official forum a
   - [Nginx (`ngx_http_dav_module`, `nginx-dav-ext-module`, with Docker)](./docs/remote_services/webdav_nginx/README.md)
   - [Apache (with Docker)](./docs/remote_services/webdav_apache/README.md)
   - [Caddy with `http.handlers.webdav` module](./docs/remote_services/webdav_caddy/README.md)
-- Very old version of Obsidian needs [configuring CORS](./docs/remote_services/webdav_general/webav_cors.md).
+- Very old version of Obsidian needs [configuring CORS](./docs/remote_services/webdav_general/webav_cors.md). Current Obsidian (1.5+ / 1.13) bypasses CORS via `requestUrl`.
+- For Synology NAS, pick the **Synology NAS** WebDAV preset. Official WebDAV Server ports are **HTTPS 5006** and **HTTP 5005**. Enable DavDepthInfinity. See the [Synology tutorial](./docs/remote_services/webdav_synology_webdav_server/README.md).
 - Your data would be synced to a `${vaultName}` sub folder on your webdav server.
 - Password-based end-to-end encryption is also supported. But please be aware that **the vault name itself is not encrypted**.
 - If you want to sync the files across multiple devices, **your vault name should be the same** while using default settings.
@@ -138,6 +141,10 @@ Additionally, the plugin author may occasionally visit Obsidian official forum a
 ### Onedrive (Full access) (PRO feature)
 
 PRO (paid) feature "sync with Onedrive (Full)" allows users to to sync with Onedrive root folder. Tutorials and limitations are documented [here](./docs/remote_services/onedrivefull/README.md).
+
+### Google Drive (Bring Your Own OAuth client)
+
+This fork can sync with Google Drive **without** a Remotely Save PRO subscription. You create a Google Cloud OAuth client and paste Client ID / secret into the plugin. Setup and limits: [Google Drive (self OAuth)](./docs/remote_services/googledrive_byo/README.md).
 
 ### Google Drive (GDrive) (PRO feature)
 

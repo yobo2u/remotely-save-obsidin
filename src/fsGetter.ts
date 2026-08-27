@@ -8,6 +8,7 @@ import { FakeFsYandexDisk } from "../pro/src/fsYandexDisk";
 import type { RemotelySavePluginSettings } from "./baseTypes";
 import type { FakeFs } from "./fsAll";
 import { FakeFsDropbox } from "./fsDropbox";
+import { FakeFsGDrive } from "./fsGDrive";
 import { FakeFsOnedrive } from "./fsOnedrive";
 import { FakeFsS3 } from "./fsS3";
 import { FakeFsWebdav } from "./fsWebdav";
@@ -51,6 +52,12 @@ export function getClient(
     case "webdis":
       return new FakeFsWebdis(
         settings.webdis,
+        vaultName,
+        saveUpdatedConfigFunc
+      );
+    case "gdrive":
+      return new FakeFsGDrive(
+        settings.gdrive,
         vaultName,
         saveUpdatedConfigFunc
       );
