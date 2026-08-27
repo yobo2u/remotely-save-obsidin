@@ -43,6 +43,10 @@
 - 免费版本支持 **[基本冲突检测和处理](./docs/sync_algorithm/v3/intro.md)**。PRO 版本支持 **[高级智能冲突处理](./pro/README.md)**。
 - 源代码可阅。详见[许可证](./LICENSE)。
 
+## Go 引擎（本分支）
+
+桌面方案：[`vaultsync/`](./vaultsync/) 用 Go 做 **Obsidian 库 ↔ 群晖 NAS ↔ Google 云盘** 的双向同步，并提供 `vaultsync setup google` / `vaultsync setup synology` 自动配置。可选薄插件：[`obsidian-vaultsync/`](./obsidian-vaultsync/)。手机仍用上面的 TypeScript 插件。**请先备份库。**
+
 ## 限制
 
 - **云服务会产生费用。** 始终记得注意成本和定价。具体来说，所有操作，包括但不限于下载、上传、列出所有文件、调用任何 api、存储大小，可能会或可能不会产生费用。

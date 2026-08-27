@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-vaultsync",
+	"name": "Vaultsync (Go sidecar)",
+	"version": "0.1.0",
+	"minAppVersion": "1.5.0",
+	"description": "Desktop helper that talks to the local vaultsync Go engine for bidirectional Synology NAS and Google Drive sync.",
+	"author": "yobo2u",
+	"authorUrl": "https://github.com/yobo2u/remotely-save-obsidin",
+	"isDesktopOnly": true
+}
