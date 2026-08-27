@@ -18,6 +18,7 @@ import type {
   SUPPORTED_SERVICES_TYPE_WITH_REMOTE_BASE_DIR,
   SyncDirectionType,
   WebdavAuthType,
+  WebdavPresetType,
 } from "./baseTypes";
 
 import cloneDeep from "lodash/cloneDeep";
@@ -68,6 +69,11 @@ import {
   stringToFragment,
 } from "./misc";
 import { DEFAULT_PROFILER_CONFIG } from "./profiler";
+import { generateGDriveSettingsPart } from "./settingsGDrive";
+import {
+  buildSynologyWebdavAddress,
+  mergeSynologyConfig,
+} from "./webdavSynology";
 
 class PasswordModal extends Modal {
   plugin: RemotelySavePlugin;
@@ -1522,6 +1528,145 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
       }),
     });
 
+    if (this.plugin.settings.webdav.preset === undefined) {
+      this.plugin.settings.webdav.preset = "generic";
+    }
+    if (this.plugin.settings.webdav.synology === undefined) {
+      this.plugin.settings.webdav.synology = mergeSynologyConfig();
+    }
+
+    const synologyFieldsDiv = webdavDiv.createDiv({
+      cls: "webdav-synology-hide",
+    });
+
+    const syncSynologyAddress = async () => {
+      if (this.plugin.settings.webdav.preset !== "synology") {
+        return;
+      }
+      const syn = mergeSynologyConfig(this.plugin.settings.webdav.synology);
+      this.plugin.settings.webdav.synology = syn;
+      const built = buildSynologyWebdavAddress(syn);
+      if (built !== "") {
+        this.plugin.settings.webdav.address = built;
+      }
+      await this.plugin.saveSettings();
+    };
+
+    new Setting(webdavDiv)
+      .setName(t("settings_webdav_preset"))
+      .setDesc(t("settings_webdav_preset_desc"))
+      .addDropdown((dropdown) => {
+        dropdown.addOption("generic", t("settings_webdav_preset_generic"));
+        dropdown.addOption("synology", t("settings_webdav_preset_synology"));
+        dropdown
+          .setValue(this.plugin.settings.webdav.preset || "generic")
+          .onChange(async (val) => {
+            const preset = val as WebdavPresetType;
+            this.plugin.settings.webdav.preset = preset;
+            synologyFieldsDiv.toggleClass(
+              "webdav-synology-hide",
+              preset !== "synology"
+            );
+            if (preset === "synology") {
+              this.plugin.settings.webdav.authType = "basic";
+              this.plugin.settings.webdav.depth = "manual_infinity";
+              this.plugin.settings.webdav.manualRecursive = false;
+              await syncSynologyAddress();
+            } else {
+              await this.plugin.saveSettings();
+            }
+            this.display();
+          });
+      });
+
+    synologyFieldsDiv.toggleClass(
+      "webdav-synology-hide",
+      this.plugin.settings.webdav.preset !== "synology"
+    );
+
+    synologyFieldsDiv.createEl("p", {
+      text: t("settings_webdav_synology_help"),
+      cls: "webdav-disclaimer",
+    });
+
+    new Setting(synologyFieldsDiv)
+      .setName(t("settings_webdav_synology_protocol"))
+      .setDesc(t("settings_webdav_synology_protocol_desc"))
+      .addDropdown((dropdown) => {
+        dropdown.addOption("https", "https (5006)");
+        dropdown.addOption("http", "http (5005)");
+        dropdown
+          .setValue(this.plugin.settings.webdav.synology?.protocol || "https")
+          .onChange(async (val) => {
+            const protocol = val === "http" ? "http" : "https";
+            this.plugin.settings.webdav.synology = mergeSynologyConfig({
+              ...this.plugin.settings.webdav.synology,
+              protocol,
+              port:
+                this.plugin.settings.webdav.synology?.port ||
+                (protocol === "https" ? "5006" : "5005"),
+            });
+            if (
+              this.plugin.settings.webdav.synology.port === "5005" ||
+              this.plugin.settings.webdav.synology.port === "5006" ||
+              this.plugin.settings.webdav.synology.port === ""
+            ) {
+              this.plugin.settings.webdav.synology.port =
+                protocol === "https" ? "5006" : "5005";
+            }
+            await syncSynologyAddress();
+            this.display();
+          });
+      });
+
+    new Setting(synologyFieldsDiv)
+      .setName(t("settings_webdav_synology_host"))
+      .setDesc(t("settings_webdav_synology_host_desc"))
+      .addText((text) =>
+        text
+          .setPlaceholder("192.168.1.10  or  nas.example.com")
+          .setValue(this.plugin.settings.webdav.synology?.host || "")
+          .onChange(async (value) => {
+            this.plugin.settings.webdav.synology = mergeSynologyConfig({
+              ...this.plugin.settings.webdav.synology,
+              host: value.trim(),
+            });
+            await syncSynologyAddress();
+          })
+      );
+
+    new Setting(synologyFieldsDiv)
+      .setName(t("settings_webdav_synology_port"))
+      .setDesc(t("settings_webdav_synology_port_desc"))
+      .addText((text) =>
+        text
+          .setPlaceholder("5006")
+          .setValue(this.plugin.settings.webdav.synology?.port || "5006")
+          .onChange(async (value) => {
+            this.plugin.settings.webdav.synology = mergeSynologyConfig({
+              ...this.plugin.settings.webdav.synology,
+              port: value.trim(),
+            });
+            await syncSynologyAddress();
+          })
+      );
+
+    new Setting(synologyFieldsDiv)
+      .setName(t("settings_webdav_synology_share"))
+      .setDesc(t("settings_webdav_synology_share_desc"))
+      .addText((text) =>
+        text
+          .setPlaceholder("share2/obsidian")
+          .setValue(this.plugin.settings.webdav.synology?.sharedFolder || "")
+          .onChange(async (value) => {
+            this.plugin.settings.webdav.synology = mergeSynologyConfig({
+              ...this.plugin.settings.webdav.synology,
+              sharedFolder: value.trim().replace(/^\/+/, ""),
+            });
+            await syncSynologyAddress();
+          })
+      );
+
     new Setting(webdavDiv)
       .setName(t("settings_webdav_addr"))
       .setDesc(t("settings_webdav_addr_desc"))
@@ -1854,8 +1999,16 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
       () => this.plugin.saveSettings()
     );
 
+    const { gdriveDiv } = generateGDriveSettingsPart(
+      containerEl,
+      t,
+      this.app,
+      this.plugin,
+      () => this.plugin.saveSettings()
+    );
+
     //////////////////////////////////////////////////
-    // below for googledrive
+    // below for googledrive (original PRO adapter)
     //////////////////////////////////////////////////
 
     const {
@@ -1944,6 +2097,7 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
         dropdown.addOption("webdav", t("settings_chooseservice_webdav"));
         dropdown.addOption("onedrive", t("settings_chooseservice_onedrive"));
         dropdown.addOption("webdis", t("settings_chooseservice_webdis"));
+        dropdown.addOption("gdrive", t("settings_chooseservice_gdrive"));
 
         dropdown.addOption("separator line", "-----");
         (dropdown.selectEl.lastChild as HTMLElement).setAttribute(
@@ -1998,6 +2152,10 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
             webdisDiv.toggleClass(
               "webdis-hide",
               this.plugin.settings.serviceType !== "webdis"
+            );
+            gdriveDiv.toggleClass(
+              "gdrive-hide",
+              this.plugin.settings.serviceType !== "gdrive"
             );
             googleDriveDiv.toggleClass(
               "googledrive-hide",
@@ -2637,6 +2795,12 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
         button.setButtonText(t("settings_export_webdis_button"));
         button.onClick(async () => {
           new ExportSettingsQrCodeModal(this.app, this.plugin, "webdis").open();
+        });
+      })
+      .addButton(async (button) => {
+        button.setButtonText(t("settings_export_gdrive_button"));
+        button.onClick(async () => {
+          new ExportSettingsQrCodeModal(this.app, this.plugin, "gdrive").open();
         });
       })
       .addButton(async (button) => {

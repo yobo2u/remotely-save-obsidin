@@ -14,6 +14,10 @@ import type {
   YandexDiskConfig,
 } from "../pro/src/baseTypesPro";
 import type { LangTypeAndAuto } from "./i18n";
+import type {
+  WebdavSynologyConfig,
+  WebdavSynologyProtocol,
+} from "./webdavSynology";
 
 declare global {
   var DEFAULT_DROPBOX_APP_KEY: string;
@@ -34,6 +38,7 @@ export type SUPPORTED_SERVICES_TYPE =
   | "onedrive"
   | "onedrivefull"
   | "webdis"
+  | "gdrive"
   | "googledrive"
   | "box"
   | "pcloud"
@@ -89,6 +94,25 @@ export type WebdavDepthType =
   | "manual_1"
   | "manual_infinity";
 
+export type WebdavPresetType = "generic" | "synology";
+export type { WebdavSynologyConfig, WebdavSynologyProtocol };
+
+export const GDRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+
+export interface GDriveConfig {
+  accessToken: string;
+  accessTokenExpiresInMs: number;
+  accessTokenExpiresAtTimeMs: number;
+  refreshToken: string;
+  remoteBaseDir?: string;
+  credentialsShouldBeDeletedAtTimeMs?: number;
+  clientID: string;
+  clientSecret: string;
+  redirectUri: string;
+  scope: typeof GDRIVE_SCOPE;
+  kind: "gdrive";
+}
+
 export interface WebdavConfig {
   address: string;
   username: string;
@@ -99,6 +123,12 @@ export interface WebdavConfig {
   remoteBaseDir?: string;
 
   customHeaders?: string;
+
+  /**
+   * "synology" fills address from host/port/sharedFolder and prefers depth=infinity.
+   */
+  preset?: WebdavPresetType;
+  synology?: WebdavSynologyConfig;
 
   /**
    * @deprecated
@@ -152,6 +182,7 @@ export interface RemotelySavePluginSettings {
   onedrive: OnedriveConfig;
   onedrivefull: OnedriveFullConfig;
   webdis: WebdisConfig;
+  gdrive: GDriveConfig;
   googledrive: GoogleDriveConfig;
   box: BoxConfig;
   pcloud: PCloudConfig;

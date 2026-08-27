@@ -51,13 +51,17 @@ esbuild
       "http",
       "https",
       "vm",
+      "url",
+      "node:url",
+      "node:fs",
+      "node:path",
       // "process",
       // ...builtins
     ],
     inject: ["./esbuild.injecthelper.mjs"],
     format: "cjs",
     // watch: !prod, // no longer valid in esbuild 0.17
-    target: "es2016",
+    target: "es2020",
     logLevel: "info",
     sourcemap: prod ? false : "inline",
     treeShaking: true,

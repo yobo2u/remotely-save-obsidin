@@ -36,17 +36,19 @@ Synology DSM 7 is used in this tutorial.
 
    ![](./synology_webdav_server_settings.png)
 
-6. In Remotely Save settings, you should input your address as:
+6. In Remotely Save settings, choose **WebDAV**, then set **Server Preset** to **Synology NAS (WebDAV Server)**. Fill:
 
-   `http(s)://<your synology ip or domain>:<port>/<shared folder>/<sub folders>`
+   - Protocol: `https` (port **5006**) or `http` (port **5005**)
+   - NAS Host: LAN IP or hostname (QuickConnect is usually **not** usable for WebDAV)
+   - Shared Folder Path: `share2/哈哈哈/sub folder`
 
-   For example, in the tutorial, the proper url should be:
+   Username and password should be the DSM user with read / write permissions to `share2`.
 
-   `http://<ip>:5000/share2/哈哈哈/sub folder`
+   Depth header is set to "supports depth=infinity" automatically when you pick the Synology preset. Enable **DavDepthInfinity** in the WebDAV Server package.
 
-   Username and password should be the user you configured before with read / write permissions to `share2`.
+   You can still paste a full URL into **Server Address** if you prefer the generic WebDAV mode:
 
-   Depth header should be "supports depth="infinity"".
+   `https://<your synology ip or domain>:5006/<shared folder>/<sub folders>`
 
    Check connectivity!
 

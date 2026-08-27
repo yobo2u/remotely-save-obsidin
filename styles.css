@@ -88,6 +88,10 @@
   display: none;
 }
 
+.webdav-synology-hide {
+  display: none;
+}
+
 .webdav-customheaders-textarea {
   font-family: monospace;
 }
@@ -96,6 +100,21 @@
   font-weight: bold;
 }
 .webdis-hide {
+  display: none;
+}
+
+.gdrive-disclaimer {
+  font-weight: bold;
+}
+.gdrive-hide {
+  display: none;
+}
+
+.gdrive-auth-button-hide {
+  display: none;
+}
+
+.gdrive-revoke-auth-button-hide {
   display: none;
 }
 

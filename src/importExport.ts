@@ -26,6 +26,7 @@ export const exportQrCodeUri = async (
     delete settings2.onedrivefull;
     delete settings2.webdav;
     delete settings2.webdis;
+    delete settings2.gdrive;
     delete settings2.googledrive;
     delete settings2.box;
     delete settings2.pcloud;
@@ -47,6 +48,8 @@ export const exportQrCodeUri = async (
     settings2 = { webdav: cloneDeep(settings.webdav) };
   } else if (exportFields === "webdis") {
     settings2 = { webdis: cloneDeep(settings.webdis) };
+  } else if (exportFields === "gdrive") {
+    settings2 = { gdrive: cloneDeep(settings.gdrive) };
   } else if (exportFields === "googledrive") {
     settings2 = { googledrive: cloneDeep(settings.googledrive) };
   } else if (exportFields === "box") {

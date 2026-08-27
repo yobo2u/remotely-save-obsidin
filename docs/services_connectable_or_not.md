@@ -30,7 +30,8 @@ The list is for information purposes only.
 | Dropbox | Yes | | | Yes |
 | OneDrive for personal | Yes | | | Yes |
 | OneDrive for Business | Yes | | | ? |
-| Google Drive | Yes (with limitations) (PRO) | | | Yes (with limitations) (PRO) |
+| Google Drive | Yes (self OAuth in this fork) / Yes (PRO, original adapter) | | | Yes |
+| Synology NAS (WebDAV Server) | Yes | | Yes | |
 | [Box](https://www.box.com/) | Yes (PRO) | | | Yes (PRO) |
 | [pCloud](https://www.pcloud.com/) | Yes (PRO) | | Yes | Yes (PRO) |
 | Google Cloud Storage | ? | | | May be possible but needs further development. |
