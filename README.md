@@ -43,6 +43,10 @@ This is yet another unofficial sync plugin for Obsidian. If you like it or find 
 - **[Basic Conflict Detection And Handling](./docs/sync_algorithm/v3/intro.md)** for free version. **[Advanced Smart Conflict Handling](./pro/README.md)** for PRO version. 
 - Source Available. See [License](./LICENSE) for details.
 
+## Go engine (this fork)
+
+Desktop-only alternative: [`vaultsync/`](./vaultsync/) is a Go sync engine for **bidirectional** vault sync with **Synology NAS (File Station)** and **Google Drive (your OAuth client)**, including `vaultsync setup google` / `vaultsync setup synology`. Optional thin plugin: [`obsidian-vaultsync/`](./obsidian-vaultsync/). Mobile still uses the TypeScript plugin above. **Backup the vault first.**
+
 ## Limitations
 
 - **Cloud services cost you money.** Always be aware of the costs and pricing. Specifically, all the operations, including but not limited to downloading, uploading, listing all files, calling any api, storage sizes, may or may not cost you money.

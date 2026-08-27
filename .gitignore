@@ -7,9 +7,10 @@ node_modules
 package-lock.json
 pnpm-lock.yaml
 
-# build
-main.js
+# build (root TypeScript plugin bundle only)
+/main.js
 *.js.map
+vaultsync/bin/
 
 # obsidian
 data.json
