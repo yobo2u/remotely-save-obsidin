@@ -43,6 +43,10 @@ This is yet another unofficial sync plugin for Obsidian. If you like it or find 
 - **[Basic Conflict Detection And Handling](./docs/sync_algorithm/v3/intro.md)** for free version. **[Advanced Smart Conflict Handling](./pro/README.md)** for PRO version. 
 - Source Available. See [License](./LICENSE) for details.
 
+## Client Direct Sync (this fork)
+
+New self-hosted-style plugin in [`clientsync/`](./clientsync/): bidirectional vault sync with **Google Drive**, **Synology**, and **QNAP** using only the Obsidian client (`requestUrl`). No author server and no sidecar. **Backup the vault first.** Apache 2.0; does not use `pro/`.
+
 ## Limitations
 
 - **Cloud services cost you money.** Always be aware of the costs and pricing. Specifically, all the operations, including but not limited to downloading, uploading, listing all files, calling any api, storage sizes, may or may not cost you money.
