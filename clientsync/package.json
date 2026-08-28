@@ -1,0 +1,13 @@
+{
+  "name": "obsidian-client-direct-sync",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Obsidian plugin: bidirectional sync with Google Drive, Synology, and QNAP from the client.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "node esbuild.mjs production",
+    "dev": "node esbuild.mjs",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "typecheck": "tsc -noEmit -skipLibCheck"
+  }
+}

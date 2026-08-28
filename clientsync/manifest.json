@@ -1,0 +1,10 @@
+{
+  "id": "client-direct-sync",
+  "name": "Client Direct Sync",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Bidirectional Obsidian sync with Google Drive, Synology NAS, and QNAP NAS. Talks to APIs from the plugin (no author server, no sidecar).",
+  "author": "yobo2u",
+  "authorUrl": "https://github.com/yobo2u/remotely-save-obsidin",
+  "isDesktopOnly": false
+}
